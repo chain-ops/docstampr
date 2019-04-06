@@ -1,7 +1,20 @@
-const $ = document.querySelector.bind(document);
 
 let App = {};
+
+App.existsHash = function(hash) {
+    $.get( "http://localhost:8888/hashes/"+hash, function( data ) {
+        $( ".result" ).html( data );
+    });
+}
+
+App.sendHash = function (hash) {
+    $.post("http://localhost:8888/hashes", hash, function(data, status){
+        console.log(data)
+    }, 'text');
+}
+
 App.init = (function() {
+    const $ = document.querySelector.bind(document);
     //Init
     function handleFileSelect(evt) {
         const files = evt.target.files; // FileList object
@@ -23,7 +36,6 @@ App.init = (function() {
 
         $("#drop").classList.add("hidden");
         $("footer").classList.add("hasFiles");
-        $(".importar").classList.add("active");
         setTimeout(() => {
             $(".list-files").innerHTML = template;
         }, 1000);
@@ -59,37 +71,27 @@ App.init = (function() {
     };
     $("#drop").ondrop = evt => {
         $("input[type=file]").files = evt.dataTransfer.files;
-        sha256Hash(evt.dataTransfer.files[0])
+        sha256Hash(evt.dataTransfer.files[0]);
         $("footer").classList.add("hasFiles");
         $("#drop").classList.remove("active");
         evt.preventDefault();
     };
 
-    //upload more
-    $(".importar").addEventListener("click", () => {
-        $(".list-files").innerHTML = "";
-        $("footer").classList.remove("hasFiles");
-        $(".importar").classList.remove("active");
-        setTimeout(() => {
-            $("#drop").classList.remove("hidden");
-        }, 500);
-    });
-
     function onFileReady(event) {
-        var hash = sha256(event.target.result)
-        $("#file-input-hash").innerText = hash;
-        showHash();
+        var hash = sha256(event.target.result);
+        App.sendHash(hash);
+        showHash(hash);
     }
 
 
-    function showHash() {
-        hide($("#drop"))
-        show($("#hash"))
+    function showHash(hash) {
+        $("#file-input-hash").innerText = hash;
+        hide($("#drop"));
+        show($("#hash"));
     }
 
     function hide(elem) {
         elem.classList.add("hidden");
-
     }
     function show(elem) {
         elem.classList.remove("hidden");
