@@ -14,10 +14,18 @@ App.sendHash = function (hash) {
 }
 
 App.template = function (files, fileIndex) {
-                return `<div class="file file--${fileIndex}">
-                    <div class="name"><span>${files[fileIndex].name}</span></div>
-                </div>
-                <div id="file-input-hash" class="hash"></div>`;
+                return `
+                    <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
+                    <div class="file-desc">
+                        <div class="file file--${fileIndex}">
+                            File:
+                            <div class="name"><span>${files[fileIndex].name}</span></div>
+                        </div>
+                        <div class="file hash">
+                            Hash:
+                            <div class="name"><span id="file-input-hash">${files[fileIndex].name}</span></div>
+                    </div>
+                `;
 }
 App.init = (function() {
     const $ = document.querySelector.bind(document);
@@ -32,16 +40,14 @@ App.init = (function() {
         let file = 0;
         $("#drop").classList.add("hidden");
         $("footer").classList.add("hasFiles");
-        $(".importar").classList.add("active");
         setTimeout(() => {
             $(".list-files").innerHTML = App.template(files, file);
             sha256Hash(files[file]);
+            $("#delete-file").addEventListener("click", evt => {
+                backToUplaod();
+            });
         }, 1000);
 
-        let load = 2000; // fake load
-        setTimeout(() => {
-
-        }, load);
     }
 
     // trigger input
@@ -64,6 +70,14 @@ App.init = (function() {
         handleFileSelect(evt.dataTransfer.files);
         evt.preventDefault();
     };
+
+    function backToUplaod(file) {
+        $(".list-files").innerHTML = "";
+        $("footer").classList.remove("hasFiles");
+        setTimeout(() => {
+            $("#drop").classList.remove("hidden");
+        }, 500);
+    }
 
     function sha256Hash(file) {
         var reader = new FileReader();
@@ -88,15 +102,6 @@ App.init = (function() {
     function show(elem) {
         elem.classList.remove("hidden");
     }
-
-    $(".importar").addEventListener("click", () => {
-        $(".list-files").innerHTML = "";
-        $("footer").classList.remove("hasFiles");
-        $(".importar").classList.remove("active");
-        setTimeout(() => {
-            $("#drop").classList.remove("hidden");
-        }, 500);
-    });
 
     // input change
     $("input[type=file]").addEventListener("change", handleFileSelectEvent);
