@@ -111,13 +111,52 @@
               <div class="body shown" id="drop">
                 <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
                 <p class="pointer-none"><b>Drag and drop</b> files here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
-                <input type="file" multiple="multiple" />
               </div>
               <footer class="hidden" id="hash">
                 <div class="divider">
                 </div>
                 <div class="list-files">
-                  <!--   template   -->
+                  <div class="row">
+                    <div class="col-2">
+                      <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
+                    </div>
+                    <div class="col-9">
+                      <div class="file-desc">
+                        <div class="row">
+                          <div class="col-1 text-left">
+                            File:
+                          </div>
+                          <div id="file-name" class="col-10 text-left text-truncate">
+
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-1 text-left">
+                            Hash:
+                          </div>
+                          <div class="col-10 text-left text-truncate" id="file-input-hash">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <form id="metadataForm" enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="col-2">
+                        <button type="submit" id="update" class="btn btn-primary importar">Update</button>
+                      </div>
+                      <div class="col-9">
+                        <div class="form-group">
+                          <input type="text" class="form-control form-control-sm" id="tag" aria-describedby="tagHelp" placeholder="Enter tags">
+                        </div>
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="uploadFileCheck">
+                          <label class="form-check-label" for="uploadFileCheck">Upload file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="file" id="file-input" />
+                  </form>
                 </div>
               </footer>
             </div>

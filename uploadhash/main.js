@@ -8,55 +8,49 @@ App.existsHash = function(hash) {
 }
 
 App.sendHash = function (hash) {
+    App.hash = hash;
     $.post("http://localhost:8888/hashes", hash, function(data, status){
         console.log(data)
     }, 'text');
 }
 
-App.template = function (files, fileIndex) {
-                return `
-                    <div class="row">
-                        <div class="col-2">
-                            <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
-                        </div>
-                        <div class="col-9">
-                            <div class="file-desc">
-                                <div class="row">
-                                    <div class="col-1 text-left">
-                                      File:
-                                    </div>
-                                    <div class="col-10 text-left text-truncate">
-                                      ${files[fileIndex].name}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-1 text-left">
-                                        Hash:
-                                    </div>
-                                    <div class="col-10 text-left text-truncate" id="file-input-hash">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <form>
-                        <div class="row">
-                          <div class="col-2">
-                            <button type="submit" class="btn btn-primary importar">Update</button>
-                          </div>
-                          <div class="col-9">
-                            <div class="form-group">
-                              <input type="tect" class="form-control form-control-sm" id="tag" aria-describedby="tagHelp" placeholder="Enter tags">
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                              <label class="form-check-label" for="exampleCheck1">Upload file</label>
-                            </div>
-                          </div>
-                        </div>
-                    </form>
-                `;
+App.updateMetadata = function () {
+    var tags = $('#tag');
+    var uploadFileChecked = $('#uploadFileCheck')[0].checked;
+
+    var data = new FormData();
+    data.append('tags', tags.val());
+
+    if(uploadFileChecked) {
+        var fileInput = $('#file-input')[0].files[0];
+        data.append('file', fileInput);
+    }
+    // uploadFileCheck.value
+
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8888/hashes/"+App.hash+"/metadata",
+        data: data,
+
+        // prevent jQuery from automatically transforming the data into a query string
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 1000000,
+        success: function(data, textStatus, jqXHR) {
+            console.log("SUCCESS : ", data);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log("ERROR : ", jqXHR.responseText);
+
+        }
+    });
+
+    $.post("", hash, function(data, status){
+        console.log(data)
+    }, 'text');
 }
+
 App.init = (function() {
     const $ = document.querySelector.bind(document);
 
@@ -68,15 +62,17 @@ App.init = (function() {
     function handleFileSelect(files) {
         //files template
         let file = 0;
+        $("#file-name").innerText = files[file].name
         showFooter();
-        setTimeout(() => {
-            $(".list-files").innerHTML = App.template(files, file);
-            sha256Hash(files[file]);
-            $("#delete-file").addEventListener("click", evt => {
-                showBody();
-            });
-        }, 1000);
-
+        sha256Hash(files[file]);
+        $("#delete-file").addEventListener("click", evt => {
+            evt.preventDefault();
+            showBody();
+        });
+        $("#update").addEventListener("click", evt => {
+            evt.preventDefault();
+            App.updateMetadata();
+        });
     }
 
     // trigger input
@@ -90,7 +86,7 @@ App.init = (function() {
         $("#drop").classList.remove("active");
         evt.preventDefault();
     };
-    $("#drop").ondragover = $("#drop").ondragenter = evt => {
+    $("#drop").ondragenter = evt => {
         $("#drop").classList.add("active");
         evt.preventDefault();
     };
@@ -101,19 +97,16 @@ App.init = (function() {
     };
 
     function showBody() {
-        $(".list-files").innerHTML = "";
-
         $("footer").classList.remove("hasFiles");
         $("#hash").classList.add("hidden");
-
         setTimeout(() => {
             $("#drop").classList.remove("hidden");
         }, 500);
     }
 
     function showFooter() {
-        $("footer").classList.add("hasFiles");
         $("#drop").classList.add("hidden");
+        $("footer").classList.add("hasFiles");
         $("#hash").classList.remove("hidden");
     }
 
