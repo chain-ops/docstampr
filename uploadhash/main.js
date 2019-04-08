@@ -15,16 +15,46 @@ App.sendHash = function (hash) {
 
 App.template = function (files, fileIndex) {
                 return `
-                    <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
-                    <div class="file-desc">
-                        <div class="file file--${fileIndex}">
-                            File:
-                            <div class="name"><span>${files[fileIndex].name}</span></div>
+                    <div class="row">
+                        <div class="col-2">
+                            <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
                         </div>
-                        <div class="file hash">
-                            Hash:
-                            <div class="name"><span id="file-input-hash">${files[fileIndex].name}</span></div>
+                        <div class="col-9">
+                            <div class="file-desc">
+                                <div class="row">
+                                    <div class="col-1 text-left">
+                                      File:
+                                    </div>
+                                    <div class="col-10 text-left text-truncate">
+                                      ${files[fileIndex].name}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1 text-left">
+                                        Hash:
+                                    </div>
+                                    <div class="col-10 text-left text-truncate" id="file-input-hash">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <form>
+                        <div class="row">
+                          <div class="col-2">
+                            <button type="submit" class="btn btn-primary importar">Update</button>
+                          </div>
+                          <div class="col-9">
+                            <div class="form-group">
+                              <input type="tect" class="form-control form-control-sm" id="tag" aria-describedby="tagHelp" placeholder="Enter tags">
+                            </div>
+                            <div class="form-check">
+                              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                              <label class="form-check-label" for="exampleCheck1">Upload file</label>
+                            </div>
+                          </div>
+                        </div>
+                    </form>
                 `;
 }
 App.init = (function() {
@@ -38,13 +68,12 @@ App.init = (function() {
     function handleFileSelect(files) {
         //files template
         let file = 0;
-        $("#drop").classList.add("hidden");
-        $("footer").classList.add("hasFiles");
+        showFooter();
         setTimeout(() => {
             $(".list-files").innerHTML = App.template(files, file);
             sha256Hash(files[file]);
             $("#delete-file").addEventListener("click", evt => {
-                backToUplaod();
+                showBody();
             });
         }, 1000);
 
@@ -71,12 +100,21 @@ App.init = (function() {
         evt.preventDefault();
     };
 
-    function backToUplaod(file) {
+    function showBody() {
         $(".list-files").innerHTML = "";
+
         $("footer").classList.remove("hasFiles");
+        $("#hash").classList.add("hidden");
+
         setTimeout(() => {
             $("#drop").classList.remove("hidden");
         }, 500);
+    }
+
+    function showFooter() {
+        $("footer").classList.add("hasFiles");
+        $("#drop").classList.add("hidden");
+        $("#hash").classList.remove("hidden");
     }
 
     function sha256Hash(file) {
