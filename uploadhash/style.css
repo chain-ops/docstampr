@@ -47,7 +47,7 @@
     padding: 20px 0;
     height: 200px;
 }
-.upload .upload-files .file-input {
+.upload .upload-files #file-input {
     visibility: hidden;
 }
 .upload .upload-files .body i {
