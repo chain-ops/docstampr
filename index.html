@@ -26,6 +26,7 @@
 
   <!-- Main Stylesheet File -->
   <link href="css/style.css" rel="stylesheet">
+  <link href="uploadhash/style.css" rel="stylesheet">
 
   <!-- =======================================================
     Theme Name: Rapid
@@ -68,7 +69,7 @@
           <li><a href="#footer">Contact Us</a></li>
         </ul>
       </nav><!-- .main-nav -->
-      
+
     </div>
   </header><!-- #header -->
 
@@ -85,7 +86,7 @@
             <a href="#stampr" class="btn-get-started scrollto">Test it now</a>
           </div>
         </div>
-  
+
         <div class="col-md-6 intro-img order-md-last order-first">
           <img src="img/intro-img.svg" alt="" class="img-fluid">
         </div>
@@ -115,7 +116,73 @@
 	      <br/>
               <h2>DOCSTAMP your file</h2>
               <h3>Upload your document here.</h3>
-              <p>Ici le widget</p>
+
+              <div class="upload">
+                <div class="upload-files">
+                  <header>
+                    <p>
+                      <i class="fa fa-cloud-upload" aria-hidden="true"></i>
+                      <span class="up">up</span>
+                      <span class="load">load</span>
+                    </p>
+                  </header>
+                  <div class="body shown" id="drop">
+                    <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
+                    <p class="pointer-none"><b>Drag and drop</b> files here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
+                  </div>
+                  <footer class="hidden" id="hash">
+                    <div class="divider">
+                    </div>
+                    <div class="list-files">
+                      <div class="row">
+                        <div class="col-2">
+                          <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
+                        </div>
+                        <div class="col-9">
+                          <div class="file-desc">
+                            <div class="row">
+                              <div class="col-1 text-left">
+                                File:
+                              </div>
+                              <div id="file-name" class="col-10 text-left text-truncate">
+
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-1 text-left">
+                                Hash:
+                              </div>
+                              <div class="col-10 text-left text-truncate" id="file-input-hash">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <form id="metadataForm" enctype="multipart/form-data">
+                        <div class="row">
+                          <div class="col-2">
+                            <button type="submit" id="update" class="btn btn-primary importar">Update</button>
+                          </div>
+                          <div class="col-9">
+                            <div class="form-group">
+                              <input type="text" class="form-control form-control-sm" id="tag" aria-describedby="tagHelp" placeholder="Enter tags">
+                            </div>
+                            <div class="form-check">
+                              <input type="checkbox" class="form-check-input" id="uploadFileCheck">
+                              <label class="form-check-label" for="uploadFileCheck">Upload file</label>
+                            </div>
+                          </div>
+                        </div>
+                        <input type="file" id="file-input" />
+                      </form>
+                    </div>
+                  </footer>
+                </div>
+              </div>
+
+
+
+
               <p>Add your file here and the proof of its authenticity will be sent to the blockchain. The file remains local, no one accesses it, only the proof of its authenticity is recorded forever on the blockchain!</p>
               <ul>
                 <li><i class="ion-android-checkmark-circle"></i> Upload your file and leave a message for people who whant to check it.</li>
@@ -198,7 +265,7 @@
     ============================-->
     <section id="why-us" class="wow fadeIn">
       <div class="container-fluid">
-        
+
         <header class="section-header">
           <h3>How does it works?</h3>
           <p>Your document is locally transformed into a cryptographic proof. Then this proof is stored on a blockchain.</p>
@@ -232,13 +299,13 @@
                 <h4>Integration services</h4>
                 <p>Our professionnal services let you integrate this mecanisme in any permissionned blockchain.</p>
               </div>
-              
+
               <div class="features wow bounceInUp clearfix">
                 <i class="fa fa-random" style="color: #57b894;"></i>
                 <h4>Opensource</h4>
                 <p>All code and applications are opensourced in Civis Blockchain association repository.</p>
               </div>
-              
+
             </div>
 
           </div>
@@ -269,7 +336,7 @@
             <span data-toggle="counter-up">18</span>
             <p>Nodes</p>
           </div>
-  
+
         </div>
 
       </div>
@@ -311,7 +378,7 @@
         <div class="row flex-items-xs-middle flex-items-xs-center">
             <!-- Basic Plan  -->
           <div class="col-xs-1 col-lg-4">
-          </div>    
+          </div>
           <!-- Basic Plan  -->
           <div class="col-xs-1 col-lg-4">
             <div class="card">
@@ -319,7 +386,7 @@
                 <h3><span class="currency">€</span>1<span class="period">/doc</span></h3>
               </div>
               <div class="card-block">
-                <h4 class="card-title"> 
+                <h4 class="card-title">
                   Easy plan
                 </h4>
                 <ul class="list-group">
@@ -331,7 +398,7 @@
               </div>
             </div>
           </div>
-      
+
 
 
     </section><!-- #pricing -->
@@ -351,7 +418,7 @@
             <a data-toggle="collapse" class="collapsed" href="#faq1">Why don't you use Ethereum or Bitcoin? <i class="ion-android-remove"></i></a>
             <div id="faq1" class="collapse" data-parent="#faq-list">
               <p>
-                We use a permissionned blockchain because we don't neet the cryptocurency stuff. We can then offer a fixed pice for our service. There already (still?)exist this kind of service on public blockchain if you need so. 
+                We use a permissionned blockchain because we don't neet the cryptocurency stuff. We can then offer a fixed pice for our service. There already (still?)exist this kind of service on public blockchain if you need so.
               </p>
             </div>
           </li>
@@ -467,7 +534,7 @@
           <div class="col-lg-6">
 
             <div class="form">
-              
+
               <h4>You whant professionnal services ?</h4>
               <p>Please subscribe to our demo waiting list bellow.</p>
               <form action="" method="post" role="form" class="contactForm">
@@ -497,7 +564,7 @@
 
           </div>
 
-          
+
 
         </div>
 
@@ -541,6 +608,8 @@
 
   <!-- Template Main Javascript File -->
   <script src="js/main.js"></script>
+  <script src="node_modules/js-sha256/build/sha256.min.js"></script>
+  <script src="uploadhash/main.js"></script>
 
 </body>
 </html>
