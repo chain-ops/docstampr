@@ -45,6 +45,7 @@ App.updateMetadata = function () {
         cache: false,
         timeout: 1000000,
         success: function(data, textStatus, jqXHR) {
+            window.alert("SUCCESS - transaction id = "+data.transactionId);
             console.log("SUCCESS : ", data);
         },
         error: function(jqXHR, textStatus, errorThrown) {
