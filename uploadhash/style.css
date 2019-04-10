@@ -2,11 +2,14 @@
     position: relative;
     box-sizing: border-box;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
     background: #fff;
     animation: fadeup 0.5s 0.5s ease both;
     transform: translateY(20px);
     opacity: 0;
+}
+.upload hr{
+  border-top: 1px dashed rgba(0,0,0,.1);
 }
 .upload .upload-files header {
     background: #413e66;
@@ -51,8 +54,13 @@
     visibility: hidden;
 }
 .upload .upload-files .body i {
-    font-size: 65px;
-    color: lightgray;
+  font-size: 55px;
+    /* color: lightgray; */
+}
+.circle-icon {
+    background: #76c2af;
+    padding:13px;
+    border-radius: 50%;
 }
 .upload .upload-files p {
     font-size: 14px;
@@ -81,7 +89,7 @@
 .upload .upload-files footer {
     width: 100%;
     margin: 0 auto;
-    height: 200px;
+    min-height: 200px;
     font-size: 12px;
 }
 .upload .upload-files footer .divider {
@@ -113,9 +121,10 @@
 .upload .upload-files footer .list-files {
     margin-top: 15px;
     padding-left: 15px;
+    padding-right: 15px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 210px;
+    /* max-height: 210px; */
 }
 
 .upload .upload-files footer form {
@@ -214,4 +223,10 @@
         width: 100%;
         height: 100%;
     }
+}
+
+/* MIXINS */
+
+.align-items-center {
+  align-items: center;
 }

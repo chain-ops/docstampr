@@ -22,18 +22,21 @@ $( document ).ready(function() {
 
 
 App.updateMetadata = function () {
-    var tags = $('#tag');
+    var author = $('#inputAuthor');
+    var version = $('#inputVersion');
+    var description = $('#inputDescription');
     var uploadFileChecked = $('#uploadFileCheck')[0].checked;
 
     var data = new FormData();
-    data.append('tags', tags.val());
+    data.append('author', author.val());
+    data.append('version', version.val());
+    data.append('description', description.val());
 
     if(uploadFileChecked) {
         var fileInput = $('#file-input')[0].files[0];
         data.append('file', fileInput);
     }
     // uploadFileCheck.value
-
     $.ajax({
         type: "POST",
         url: App.baseUrl+"/hashes/"+App.hash+"/metadata",
@@ -73,10 +76,10 @@ App.init = (function() {
         $("#file-name").innerText = files[file].name
         showFooter();
         sha256Hash(files[file]);
-        $("#delete-file").addEventListener("click", evt => {
-            evt.preventDefault();
-            showBody();
-        });
+        // $("#delete-file").addEventListener("click", evt => {
+        //     evt.preventDefault();
+        //     showBody();
+        // });
         $("#update").addEventListener("click", evt => {
             evt.preventDefault();
             App.updateMetadata();
