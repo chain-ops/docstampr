@@ -27,15 +27,23 @@ App.updateMetadata = function () {
     var description = $('#inputDescription');
     var uploadFileChecked = $('#uploadFileCheck')[0].checked;
 
-    var data = new FormData();
-    data.append('author', author.val());
-    data.append('version', version.val());
-    data.append('description', description.val());
+    // var data = new FormData();
+    // data.append('author', author.val());
+    // data.append('version', version.val());
+    // data.append('description', description.val());
 
+    var data = new Object();
+    data = {
+      "author": author.val(),
+      "version": version.val(),
+      "description": description.val()
+    }
     if(uploadFileChecked) {
         var fileInput = $('#file-input')[0].files[0];
-        data.append('file', fileInput);
+        data.file = fileInput
+        // data.append('file', fileInput);
     }
+    console.log(data);
     // uploadFileCheck.value
     $.ajax({
         type: "POST",
