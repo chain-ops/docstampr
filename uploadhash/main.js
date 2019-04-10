@@ -1,6 +1,6 @@
 
 let App = {};
-App.baseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8889";
+App.baseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899";
 
 App.existsHash = function(hash) {
     $.get( App.baseUrl+"/hashes/", hash, function( data ) {
@@ -27,24 +27,20 @@ App.updateMetadata = function () {
     var description = $('#inputDescription');
     var uploadFileChecked = $('#uploadFileCheck')[0].checked;
 
-    // var data = new FormData();
-    // data.append('author', author.val());
-    // data.append('version', version.val());
-    // data.append('description', description.val());
+    var metadata = {
+        "author": author.val(),
+        "version": version.val(),
+        "description": description.val()
+    };
 
-    var data = new Object();
-    data = {
-      "author": author.val(),
-      "version": version.val(),
-      "description": description.val()
-    }
+    var data = new FormData();
+    data.append('metadata', JSON.stringify(metadata) );
+
     if(uploadFileChecked) {
         var fileInput = $('#file-input')[0].files[0];
-        data.file = fileInput
-        // data.append('file', fileInput);
+        data.append('file', fileInput);
     }
     console.log(data);
-    // uploadFileCheck.value
     $.ajax({
         type: "POST",
         url: App.baseUrl+"/hashes/"+App.hash+"/metadata",
