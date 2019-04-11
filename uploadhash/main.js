@@ -103,6 +103,11 @@ App.init = (function() {
         $("input[type=file]").click();
     });
 
+    $("#triggerFileIcon").addEventListener("click", evt => {
+        evt.preventDefault();
+        $("input[type=file]").click();
+    });
+
     // drop events
     $("#drop").ondragleave = evt => {
         $("#drop").classList.remove("active");
