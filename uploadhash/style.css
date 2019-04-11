@@ -11,40 +11,6 @@
 .upload hr{
   border-top: 1px dashed rgba(0,0,0,.1);
 }
-.upload .upload-files header {
-    background: #413e66;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    text-align: center;
-    height: 80px;
-}
-.upload .upload-files header p {
-    color: #fff;
-    font-size: 40px;
-    margin: 0;
-    padding: 10px 0;
-}
-.upload .upload-files header p i {
-    transform: translateY(20px);
-    opacity: 0;
-    font-size: 30px;
-    animation: fadeup 0.5s 1s ease both;
-}
-.upload .upload-files header p .up {
-    font-weight: bold;
-    transform: translateX(-20px);
-    display: inline-block;
-    opacity: 0;
-    animation: faderight 0.5s 1.5s ease both;
-}
-.upload .upload-files header p .load {
-    display: inline-block;
-    font-weight: 100;
-    margin-left: -8px;
-    transform: translateX(-20px);
-    opacity: 0;
-    animation: faderight 1s 1.5s ease both;
-}
 .upload .upload-files .body {
     text-align: center;
     padding: 20px 0;
@@ -58,7 +24,7 @@
     /* color: lightgray; */
 }
 .circle-icon {
-    background: #76c2af;
+    background: #1bb1dc;
     padding:13px;
     border-radius: 50%;
 }
