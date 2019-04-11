@@ -1,20 +1,27 @@
 
 let App = {};
-App.baseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899";
+App.hashBaseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899/hashes";
 
 App.existsHash = function(hash) {
-    $.get( App.baseUrl+"/hashes/", hash, function( data ) {
+    $.get( App.hashBaseUrl, hash, function( data ) {
         $( ".result" ).html( data );
     });
-}
+};
 
 App.sendHash = function (hash) {
     App.hash = hash;
-    $.post(App.baseUrl+"/hashes", hash, function(data, status){
+    $.post(App.hashBaseUrl, hash, function(data, status){
         console.log(data)
     }, 'text');
-}
+};
 
+
+App.getMetadata = function (hash) {
+    App.hash = hash;
+    $.get(App.hashBaseUrl+'/'+hash,function(data, status){
+        console.log(data)
+    }, 'text');
+};
 
 $( document ).ready(function() {
     App.init();
@@ -43,7 +50,7 @@ App.updateMetadata = function () {
     console.log(data);
     $.ajax({
         type: "POST",
-        url: App.baseUrl+"/hashes/"+App.hash+"/metadata",
+        url: App.hashBaseUrl+"/"+App.hash+"/metadata",
         data: data,
 
         // prevent jQuery from automatically transforming the data into a query string
