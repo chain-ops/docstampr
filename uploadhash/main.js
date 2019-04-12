@@ -26,8 +26,15 @@ App.getMetadata = function (hash) {
         }
       }, 'json');
     })
-
 };
+
+App.startLoading = function (hash) {
+    $('#loading')[0].classList.remove("hidden");
+}
+
+App.stopLoading = function (hash) {
+    $('#loading')[0].classList.add("hidden");
+}
 
 $( document ).ready(function() {
     App.init();
