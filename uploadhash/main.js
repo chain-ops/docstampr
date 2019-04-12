@@ -18,9 +18,14 @@ App.sendHash = function (hash) {
 
 App.getMetadata = function (hash) {
     App.hash = hash;
-    $.get(App.hashBaseUrl+'/'+hash,function(data, status){
-        console.log(data)
-    }, 'text');
+    return new Promise((resolve, reject) => {
+      $.get(App.hashBaseUrl+'/'+hash,function(data, status){
+          if (data.public) {
+            resolve(data);
+          }
+      }, 'text');
+    })
+
 };
 
 $( document ).ready(function() {
@@ -146,6 +151,15 @@ App.init = (function() {
     function onFileReady(event) {
         var hash = sha256(event.target.result);
         App.sendHash(hash);
+        App.getMetadata(hash).then( data => {
+          publicData = JSON.parse(JSON.parse(data).public)
+          $('#inputAuthor').value = publicData.author
+          $('#inputAuthor').readOnly = true
+          $('#inputVersion').value = publicData.version
+          $('#inputVersion').readOnly = true
+          $('#inputDescription').innerText = publicData.description
+          $('#inputDescription').readOnly = true
+        })
         showHash(hash);
     }
 
