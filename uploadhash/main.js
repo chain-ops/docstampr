@@ -2,21 +2,16 @@
 let App = {};
 App.hashBaseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899/hashes";
 
-App.existsHash = function(hash) {
-    $.get( App.hashBaseUrl, hash, function( data ) {
-        $( ".result" ).html( data );
-    });
-};
-
 App.sendHash = function (hash) {
-    App.hash = hash;
-    $.post(App.hashBaseUrl, hash, function(data, status){
-    }, 'text');
+    return new Promise((resolve, reject) => {
+        $.post(App.hashBaseUrl, hash, function(data, status){
+            resolve(hash);
+        }, 'text');
+    })
 };
 
 
 App.getMetadata = function (hash) {
-    App.hash = hash;
     return new Promise((resolve, reject) => {
       $.get(App.hashBaseUrl+'/'+hash,function(data, status){
         if (data != null && data.public != null) {
@@ -30,11 +25,11 @@ App.getMetadata = function (hash) {
 
 App.startLoading = function (hash) {
     $('#loading')[0].classList.remove("hidden");
-}
+};
 
 App.stopLoading = function (hash) {
     $('#loading')[0].classList.add("hidden");
-}
+};
 
 $( document ).ready(function() {
     App.init();
@@ -46,9 +41,9 @@ App.download = function () {
   a.setAttribute("download", $('#file-name').innerHTML);
   a.click();
   return false;
-}
+};
 
-App.updateMetadata = function () {
+App.updateMetadata = function (hash) {
     var author = $('#inputAuthor');
     var version = $('#inputVersion');
     var description = $('#inputDescription');
@@ -67,29 +62,30 @@ App.updateMetadata = function () {
         var fileInput = $('#file-input')[0].files[0];
         data.append('file', fileInput);
     }
-    $.ajax({
-        type: "POST",
-        url: App.hashBaseUrl+"/"+App.hash+"/metadata",
-        data: data,
-        // prevent jQuery from automatically transforming the data into a query string
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 1000000,
-        success: function(data, textStatus, jqXHR) {
-            window.alert("SUCCESS - transaction id = "+data.transactionId);
-            console.log("SUCCESS : ", data);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log("ERROR : ", jqXHR.responseText);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: App.hashBaseUrl + "/" + hash + "/metadata",
+            data: data,
+            // prevent jQuery from automatically transforming the data into a query string
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 1000000,
+            success: function (data, textStatus, jqXHR) {
+                resolve(data)
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reject(jqXHR.responseText);
 
-        }
+            }
+        });
     });
 
     $.post("", hash, function(data, status){
         console.log(data)
     }, 'text');
-}
+};
 
 App.init = (function() {
     const $ = document.querySelector.bind(document);
@@ -102,8 +98,7 @@ App.init = (function() {
     function handleFileSelect(files) {
         //files template
         let file = 0;
-        $("#file-name").innerText = files[file].name
-        showFooter();
+        $("#file-name").innerText = files[file].name;
         sha256Hash(files[file]);
     }
 
@@ -148,6 +143,7 @@ App.init = (function() {
     }
 
     function sha256Hash(file) {
+        App.startLoading();
         var reader = new FileReader();
         reader.onload = onFileReady;
         reader.readAsBinaryString(file);
@@ -155,13 +151,23 @@ App.init = (function() {
 
     function onFileReady(event) {
         var hash = sha256(event.target.result);
-        App.sendHash(hash);
-        showHash(hash);
+        App.sendHash(hash).then(data => {
+            showMetadata(hash);
+        });
+    }
+
+    function showMetadata(hash) {
         App.getMetadata(hash).then( data => {
-          downloadMode(data) // if there is metadatas, turn widget into download mode
+            showHash(hash);
+            downloadMode(data);
+            showFooter();
+            App.stopLoading()
         }, () => {
-          updateMode() // otherwise, turn into update metadata mode
-        })
+            showHash(hash);
+            updateMode(hash);
+            showFooter();
+            App.stopLoading()
+        });
     }
 
     function downloadMode(data){
@@ -188,10 +194,13 @@ App.init = (function() {
       }
     }
 
-    function updateMode() {
+    function updateMode(hash) {
       $("#update").addEventListener("click", evt => {
         evt.preventDefault();
-        App.updateMetadata();
+        App.startLoading();
+        App.updateMetadata(hash).then(data => {
+            showMetadata(hash);
+        });
       });
     }
     function showHash(hash) {
