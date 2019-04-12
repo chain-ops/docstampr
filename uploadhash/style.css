@@ -2,45 +2,14 @@
     position: relative;
     box-sizing: border-box;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
     background: #fff;
     animation: fadeup 0.5s 0.5s ease both;
     transform: translateY(20px);
     opacity: 0;
 }
-.upload .upload-files header {
-    background: #413e66;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    text-align: center;
-    height: 80px;
-}
-.upload .upload-files header p {
-    color: #fff;
-    font-size: 40px;
-    margin: 0;
-    padding: 10px 0;
-}
-.upload .upload-files header p i {
-    transform: translateY(20px);
-    opacity: 0;
-    font-size: 30px;
-    animation: fadeup 0.5s 1s ease both;
-}
-.upload .upload-files header p .up {
-    font-weight: bold;
-    transform: translateX(-20px);
-    display: inline-block;
-    opacity: 0;
-    animation: faderight 0.5s 1.5s ease both;
-}
-.upload .upload-files header p .load {
-    display: inline-block;
-    font-weight: 100;
-    margin-left: -8px;
-    transform: translateX(-20px);
-    opacity: 0;
-    animation: faderight 1s 1.5s ease both;
+.upload hr{
+  border-top: 1px dashed rgba(0,0,0,.1);
 }
 .upload .upload-files .body {
     text-align: center;
@@ -51,8 +20,13 @@
     visibility: hidden;
 }
 .upload .upload-files .body i {
-    font-size: 65px;
-    color: lightgray;
+  font-size: 55px;
+    /* color: lightgray; */
+}
+.circle-icon {
+    background: #1bb1dc;
+    padding:13px;
+    border-radius: 50%;
 }
 .upload .upload-files p {
     font-size: 14px;
@@ -81,7 +55,7 @@
 .upload .upload-files footer {
     width: 100%;
     margin: 0 auto;
-    height: 200px;
+    min-height: 200px;
     font-size: 12px;
 }
 .upload .upload-files footer .divider {
@@ -113,9 +87,10 @@
 .upload .upload-files footer .list-files {
     margin-top: 15px;
     padding-left: 15px;
+    padding-right: 15px;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 210px;
+    /* max-height: 210px; */
 }
 
 .upload .upload-files footer form {
@@ -192,6 +167,24 @@
      padding-top: 10px;
  }
 
+.upload #loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(256, 256, 256, .8);
+    z-index: 10;
+}
+.upload #loading .spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -25px 0 0 -25px;
+    width: 50px;
+    height: 50px;
+}
+
 @keyframes fadeup {
     to {
         transform: translateY(0);
@@ -214,4 +207,10 @@
         width: 100%;
         height: 100%;
     }
+}
+
+/* MIXINS */
+
+.align-items-center {
+  align-items: center;
 }

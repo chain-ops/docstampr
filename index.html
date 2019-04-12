@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Docstapr make it true</title>
+  <title>Docstampr make it true</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta content="" name="keywords">
   <meta content="" name="description">
@@ -58,7 +58,6 @@
       <div class="logo float-left">
         <!-- Uncomment below if you prefer to use an image logo -->
         <h1 class="text-light"><a href="#intro" class="scrollto"><span>DocStampr</span></a></h1>
-        <!-- <a href="#header" class="scrollto"><img src="img/logo.png" alt="" class="img-fluid"></a> -->
       </div>
 
       <nav class="main-nav float-right d-none d-lg-block">
@@ -112,23 +111,20 @@
           </div>
 
           <div class="col-lg-7 col-md-6">
-            <div class="about-content">
-	      <br/>
+            <div class="about-content pt-3">
               <h2>DOCSTAMP your file</h2>
               <h3>Upload your document here.</h3>
 
-              <div class="upload">
+              <div class="upload mb-4">
                 <div class="upload-files">
-                  <header>
-                    <p>
-                      <i class="fa fa-cloud-upload" aria-hidden="true"></i>
-                      <span class="up">up</span>
-                      <span class="load">load</span>
-                    </p>
-                  </header>
                   <div class="body shown" id="drop">
-                    <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
+                    <a href="" id="triggerFileIcon"><i class="fa fa-cloud-upload text-white circle-icon" aria-hidden="true"></i></a>
                     <p class="pointer-none"><b>Drag and drop</b> files here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
+                  </div>
+                  <div id="loading" class="hidden">
+                    <div class="spinner spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
                   </div>
                   <footer class="hidden" id="hash">
                     <div class="divider">
@@ -136,15 +132,17 @@
                     <div class="list-files">
                       <div class="row">
                         <div class="col-2">
-                          <div id="delete-file" class="icon"><i class="ion-ios-paper-outline"></i></div>
+                          <div>
+                            <img src="./img/doc-checked.png" />
+                          </div>
                         </div>
                         <div class="col-9">
                           <div class="file-desc">
                             <div class="row">
                               <div class="col-1 text-left">
-                                File:
+                                <b>File:</b>
                               </div>
-                              <div id="file-name" class="col-10 text-left text-truncate">
+                              <div id="file-name" class="col-10 text-left text-truncate font-weight-bold">
 
                               </div>
                             </div>
@@ -158,19 +156,38 @@
                           </div>
                         </div>
                       </div>
+                      <hr />
                       <form id="metadataForm" enctype="multipart/form-data">
                         <div class="row">
                           <div class="col-2">
-                            <button type="submit" id="update" class="btn btn-primary importar">Update</button>
+                            <div>
+                              <img src="./img/wallet-pay.png" />
+                            </div>
                           </div>
                           <div class="col-9">
-                            <div class="form-group">
-                              <input type="text" class="form-control form-control-sm" id="tag" aria-describedby="tagHelp" placeholder="Enter tags">
-                            </div>
-                            <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="uploadFileCheck">
-                              <label class="form-check-label" for="uploadFileCheck">Upload file</label>
-                            </div>
+                              <div class="form-row">
+                                <div class="form-group col-md-6">
+                                  <input type="text" class="form-control" id="inputAuthor" placeholder="Author">
+                                </div>
+                                <div class="form-group col-md-6">
+                                  <input type="text" class="form-control" id="inputVersion" placeholder="Version">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <textarea type="text" class="form-control" id="inputDescription" placeholder="Description"></textarea>
+                              </div>
+                              <div class="form-group">
+                                <div class="form-check">
+                                  <input class="form-check-input" type="checkbox" id="uploadFileCheck">
+                                  <label class="form-check-label" for="uploadFileCheck">
+                                    Upload file
+                                  </label>
+                                </div>
+                              </div>
+                              <div class="form-group d-flex justify-content-between align-items-center">
+                                <a class="" href="./">CGU</a>
+                                <button id="update" type="submit" class="btn btn-primary float-right">Pay</button>
+                              </div>
                           </div>
                         </div>
                         <input type="file" id="file-input" />
@@ -397,8 +414,8 @@
                 </ul>
                 <a href="#" class="btn">Add a doc</a>
               </div>
-	    </div>
-	  </div>
+	           </div>
+          </div>
           <!-- Basic Plan  -->
           <div class="col-xs-1 col-lg-4">
             <div class="card">
@@ -445,9 +462,6 @@
               </div>
             </div>
           </div>
-
-
-
     </section><!-- #pricing -->
 
     <!--==========================
@@ -474,7 +488,7 @@
             <a data-toggle="collapse" href="#faq2" class="collapsed">What's the technology behind the service? <i class="ion-android-remove"></i></a>
             <div id="faq2" class="collapse" data-parent="#faq-list">
               <p>
-		We use SSM, an opensource protocol implemented on Smart-B to deploy fast and secure app without coding smart contracts.
+		              We use SSM, an opensource protocol implemented on Smart-B to deploy fast and secure app without coding smart contracts.
               </p>
             </div>
           </li>

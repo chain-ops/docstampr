@@ -1,63 +1,91 @@
 
 let App = {};
-App.baseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8889";
-
-App.existsHash = function(hash) {
-    $.get( App.baseUrl+"/hashes/", hash, function( data ) {
-        $( ".result" ).html( data );
-    });
-}
+App.hashBaseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899/hashes";
 
 App.sendHash = function (hash) {
-    App.hash = hash;
-    $.post(App.baseUrl+"/hashes", hash, function(data, status){
-        console.log(data)
-    }, 'text');
-}
+    return new Promise((resolve, reject) => {
+        $.post(App.hashBaseUrl, hash, function(data, status){
+            resolve(hash);
+        }, 'text');
+    })
+};
 
+
+App.getMetadata = function (hash) {
+    return new Promise((resolve, reject) => {
+      $.get(App.hashBaseUrl+'/'+hash,function(data, status){
+        if (data != null && data.public != null) {
+          resolve(data);
+        } else {
+          reject();
+        }
+      }, 'json');
+    })
+};
+
+App.startLoading = function (hash) {
+    $('#loading')[0].classList.remove("hidden");
+};
+
+App.stopLoading = function (hash) {
+    $('#loading')[0].classList.add("hidden");
+};
 
 $( document ).ready(function() {
     App.init();
 });
 
+App.download = function () {
+  var a = document.createElement("a");
+  a.href = document.getElementById('update').getAttribute('data-url');
+  a.setAttribute("download", $('#file-name').innerHTML);
+  a.click();
+  return false;
+};
 
-App.updateMetadata = function () {
-    var tags = $('#tag');
+App.updateMetadata = function (hash) {
+    var author = $('#inputAuthor');
+    var version = $('#inputVersion');
+    var description = $('#inputDescription');
     var uploadFileChecked = $('#uploadFileCheck')[0].checked;
 
+    var metadata = {
+        "author": author.val(),
+        "version": version.val(),
+        "description": description.val()
+    };
+
     var data = new FormData();
-    data.append('tags', tags.val());
+    data.append('metadata', JSON.stringify(metadata) );
 
     if(uploadFileChecked) {
         var fileInput = $('#file-input')[0].files[0];
         data.append('file', fileInput);
     }
-    // uploadFileCheck.value
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: App.hashBaseUrl + "/" + hash + "/metadata",
+            data: data,
+            // prevent jQuery from automatically transforming the data into a query string
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 1000000,
+            success: function (data, textStatus, jqXHR) {
+                resolve(data)
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reject(jqXHR.responseText);
 
-    $.ajax({
-        type: "POST",
-        url: App.baseUrl+"/hashes/"+App.hash+"/metadata",
-        data: data,
-
-        // prevent jQuery from automatically transforming the data into a query string
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 1000000,
-        success: function(data, textStatus, jqXHR) {
-            window.alert("SUCCESS - transaction id = "+data.transactionId);
-            console.log("SUCCESS : ", data);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log("ERROR : ", jqXHR.responseText);
-
-        }
+            }
+        });
     });
 
     $.post("", hash, function(data, status){
         console.log(data)
     }, 'text');
-}
+};
 
 App.init = (function() {
     const $ = document.querySelector.bind(document);
@@ -70,21 +98,17 @@ App.init = (function() {
     function handleFileSelect(files) {
         //files template
         let file = 0;
-        $("#file-name").innerText = files[file].name
-        showFooter();
+        $("#file-name").innerText = files[file].name;
         sha256Hash(files[file]);
-        $("#delete-file").addEventListener("click", evt => {
-            evt.preventDefault();
-            showBody();
-        });
-        $("#update").addEventListener("click", evt => {
-            evt.preventDefault();
-            App.updateMetadata();
-        });
     }
 
     // trigger input
     $("#triggerFile").addEventListener("click", evt => {
+        evt.preventDefault();
+        $("input[type=file]").click();
+    });
+
+    $("#triggerFileIcon").addEventListener("click", evt => {
         evt.preventDefault();
         $("input[type=file]").click();
     });
@@ -119,6 +143,7 @@ App.init = (function() {
     }
 
     function sha256Hash(file) {
+        App.startLoading();
         var reader = new FileReader();
         reader.onload = onFileReady;
         reader.readAsBinaryString(file);
@@ -126,10 +151,58 @@ App.init = (function() {
 
     function onFileReady(event) {
         var hash = sha256(event.target.result);
-        App.sendHash(hash);
-        showHash(hash);
+        App.sendHash(hash).then(data => {
+            showMetadata(hash);
+        });
     }
 
+    function showMetadata(hash) {
+        App.getMetadata(hash).then( data => {
+            showHash(hash);
+            downloadMode(data);
+            showFooter();
+            App.stopLoading()
+        }, () => {
+            showHash(hash);
+            updateMode(hash);
+            showFooter();
+            App.stopLoading()
+        });
+    }
+
+    function downloadMode(data){
+      publicData = JSON.parse(data.public)
+      $('#inputAuthor').value = publicData.author
+      $('#inputAuthor').readOnly = true
+      $('#inputVersion').value = publicData.version
+      $('#inputVersion').readOnly = true
+      $('#inputDescription').innerText = publicData.description
+      $('#inputDescription').readOnly = true
+
+      $("#uploadFileCheck").closest('.form-group').remove()
+      if (publicData.url) {
+        document.getElementById("update").innerHTML = "Download";
+        document.getElementById("update").setAttribute('data-url', publicData.url)
+        document.getElementById("update").removeEventListener('click', update);
+
+        document.getElementById("update").addEventListener("click", evt => {
+            evt.preventDefault();
+            App.download();
+        });
+      } else {
+        $("#update").remove()
+      }
+    }
+
+    function updateMode(hash) {
+      $("#update").addEventListener("click", evt => {
+        evt.preventDefault();
+        App.startLoading();
+        App.updateMetadata(hash).then(data => {
+            showMetadata(hash);
+        });
+      });
+    }
     function showHash(hash) {
         $("#file-input-hash").innerText = hash;
         hide($("#drop"));
