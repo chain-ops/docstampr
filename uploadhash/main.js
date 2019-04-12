@@ -19,13 +19,12 @@ App.getMetadata = function (hash) {
     App.hash = hash;
     return new Promise((resolve, reject) => {
       $.get(App.hashBaseUrl+'/'+hash,function(data, status){
-        data = JSON.parse(data)
         if (data != null && data.public != null) {
           resolve(data);
         } else {
           reject();
         }
-      }, 'text');
+      }, 'json');
     })
 
 };
@@ -41,6 +40,7 @@ App.download = function () {
   a.click();
   return false;
 }
+
 App.updateMetadata = function () {
     var author = $('#inputAuthor');
     var version = $('#inputVersion');
@@ -64,7 +64,6 @@ App.updateMetadata = function () {
         type: "POST",
         url: App.hashBaseUrl+"/"+App.hash+"/metadata",
         data: data,
-
         // prevent jQuery from automatically transforming the data into a query string
         processData: false,
         contentType: false,
@@ -99,11 +98,6 @@ App.init = (function() {
         $("#file-name").innerText = files[file].name
         showFooter();
         sha256Hash(files[file]);
-        // $("#delete-file").addEventListener("click", evt => {
-        //     evt.preventDefault();
-        //     showBody();
-        // });
-
     }
 
     // trigger input
@@ -174,7 +168,6 @@ App.init = (function() {
 
       $("#uploadFileCheck").closest('.form-group').remove()
       if (publicData.url) {
-        // document.getElementById("update").id = "download";
         document.getElementById("update").innerHTML = "Download";
         document.getElementById("update").setAttribute('data-url', publicData.url)
         document.getElementById("update").removeEventListener('click', update);
