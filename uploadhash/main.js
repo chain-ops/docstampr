@@ -11,7 +11,6 @@ App.existsHash = function(hash) {
 App.sendHash = function (hash) {
     App.hash = hash;
     $.post(App.hashBaseUrl, hash, function(data, status){
-        console.log(data)
     }, 'text');
 };
 
@@ -20,9 +19,12 @@ App.getMetadata = function (hash) {
     App.hash = hash;
     return new Promise((resolve, reject) => {
       $.get(App.hashBaseUrl+'/'+hash,function(data, status){
-          if (data.public) {
-            resolve(data);
-          }
+        data = JSON.parse(data)
+        if (data != null && data.public != null) {
+          resolve(data);
+        } else {
+          reject();
+        }
       }, 'text');
     })
 
@@ -32,7 +34,13 @@ $( document ).ready(function() {
     App.init();
 });
 
-
+App.download = function () {
+  var a = document.createElement("a");
+  a.href = document.getElementById('update').getAttribute('data-url');
+  a.setAttribute("download", $('#file-name').innerHTML);
+  a.click();
+  return false;
+}
 App.updateMetadata = function () {
     var author = $('#inputAuthor');
     var version = $('#inputVersion');
@@ -52,7 +60,6 @@ App.updateMetadata = function () {
         var fileInput = $('#file-input')[0].files[0];
         data.append('file', fileInput);
     }
-    console.log(data);
     $.ajax({
         type: "POST",
         url: App.hashBaseUrl+"/"+App.hash+"/metadata",
@@ -96,10 +103,7 @@ App.init = (function() {
         //     evt.preventDefault();
         //     showBody();
         // });
-        $("#update").addEventListener("click", evt => {
-            evt.preventDefault();
-            App.updateMetadata();
-        });
+
     }
 
     // trigger input
@@ -151,18 +155,45 @@ App.init = (function() {
     function onFileReady(event) {
         var hash = sha256(event.target.result);
         App.sendHash(hash);
-        App.getMetadata(hash).then( data => {
-          publicData = JSON.parse(JSON.parse(data).public)
-          $('#inputAuthor').value = publicData.author
-          $('#inputAuthor').readOnly = true
-          $('#inputVersion').value = publicData.version
-          $('#inputVersion').readOnly = true
-          $('#inputDescription').innerText = publicData.description
-          $('#inputDescription').readOnly = true
-        })
         showHash(hash);
+        App.getMetadata(hash).then( data => {
+          downloadMode(data) // if there is metadatas, turn widget into download mode
+        }, () => {
+          updateMode() // otherwise, turn into update metadata mode
+        })
     }
 
+    function downloadMode(data){
+      publicData = JSON.parse(data.public)
+      $('#inputAuthor').value = publicData.author
+      $('#inputAuthor').readOnly = true
+      $('#inputVersion').value = publicData.version
+      $('#inputVersion').readOnly = true
+      $('#inputDescription').innerText = publicData.description
+      $('#inputDescription').readOnly = true
+
+      $("#uploadFileCheck").closest('.form-group').remove()
+      if (publicData.url) {
+        // document.getElementById("update").id = "download";
+        document.getElementById("update").innerHTML = "Download";
+        document.getElementById("update").setAttribute('data-url', publicData.url)
+        document.getElementById("update").removeEventListener('click', update);
+
+        document.getElementById("update").addEventListener("click", evt => {
+            evt.preventDefault();
+            App.download();
+        });
+      } else {
+        $("#update").remove()
+      }
+    }
+
+    function updateMode() {
+      $("#update").addEventListener("click", evt => {
+        evt.preventDefault();
+        App.updateMetadata();
+      });
+    }
     function showHash(hash) {
         $("#file-input-hash").innerText = hash;
         hide($("#drop"));
