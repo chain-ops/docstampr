@@ -81,10 +81,6 @@ App.updateMetadata = function (hash) {
             }
         });
     });
-
-    $.post("", hash, function(data, status){
-        console.log(data)
-    }, 'text');
 };
 
 App.init = (function() {
