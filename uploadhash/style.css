@@ -93,6 +93,10 @@
     /* max-height: 210px; */
 }
 
+.upload .upload-files footer .list-files .ico-info {
+    margin-left: 15px;
+}
+
 .upload .upload-files footer form {
      margin-top: 15px;
  }
