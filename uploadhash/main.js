@@ -155,7 +155,7 @@ App.init = (function() {
     function showMetadata(hash) {
         App.getMetadata(hash).then( data => {
             showHash(hash);
-            downloadMode(data);
+            downloadMode(hash, data);
             showFooter();
             App.stopLoading()
         }, () => {
@@ -166,7 +166,7 @@ App.init = (function() {
         });
     }
 
-    function downloadMode(data){
+    function downloadMode(hash, data){
       publicData = JSON.parse(data.public)
       $('#inputAuthor').value = publicData.author
       $('#inputAuthor').readOnly = true
@@ -176,9 +176,9 @@ App.init = (function() {
       $('#inputDescription').readOnly = true
 
       $("#uploadFileCheck").closest('.form-group').remove()
-      if (publicData.url) {
+      if (publicData.filename) {
         document.getElementById("update").innerHTML = "Download";
-        document.getElementById("update").setAttribute('data-url', publicData.url)
+        document.getElementById("update").setAttribute('data-url', App.hashBaseUrl+"/"+hash+"/file")
         document.getElementById("update").removeEventListener('click', update);
 
         document.getElementById("update").addEventListener("click", evt => {
