@@ -1,10 +1,9 @@
-
 let App = {};
-App.hashBaseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8899/hashes";
+App.hashBaseUrl = "http://localhost:8889/hashes";
 
 App.sendHash = function (hash) {
     return new Promise((resolve, reject) => {
-        $.post(App.hashBaseUrl, hash, function(data, status){
+        $.post(App.hashBaseUrl, hash, function (data, status) {
             resolve(hash);
         }, 'text');
     })
@@ -13,13 +12,13 @@ App.sendHash = function (hash) {
 
 App.getMetadata = function (hash) {
     return new Promise((resolve, reject) => {
-      $.get(App.hashBaseUrl+'/'+hash,function(data, status){
-        if (data != null && data.public != null) {
-          resolve(data);
-        } else {
-          reject();
-        }
-      }, 'json');
+        $.get(App.hashBaseUrl + '/' + hash, function (data, status) {
+            if (data != null && data.public != null) {
+                resolve(data);
+            } else {
+                reject();
+            }
+        }, 'json');
     })
 };
 
@@ -30,17 +29,20 @@ App.startLoading = function (hash) {
 App.stopLoading = function (hash) {
     $('#loading')[0].classList.add("hidden");
 };
-
-$( document ).ready(function() {
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+$(document).ready(function () {
     App.init();
+
 });
 
 App.download = function () {
-  var a = document.createElement("a");
-  a.href = document.getElementById('update').getAttribute('data-url');
-  a.setAttribute("download", $('#file-name').innerHTML);
-  a.click();
-  return false;
+    var a = document.createElement("a");
+    a.href = document.getElementById('update').getAttribute('data-url');
+    a.setAttribute("download", $('#file-name').innerHTML);
+    a.click();
+    return false;
 };
 
 App.updateMetadata = function (hash) {
@@ -56,9 +58,9 @@ App.updateMetadata = function (hash) {
     };
 
     var data = new FormData();
-    data.append('metadata', JSON.stringify(metadata) );
+    data.append('metadata', JSON.stringify(metadata));
 
-    if(uploadFileChecked) {
+    if (uploadFileChecked) {
         var fileInput = $('#file-input')[0].files[0];
         data.append('file', fileInput);
     }
@@ -83,7 +85,7 @@ App.updateMetadata = function (hash) {
     });
 };
 
-App.init = (function() {
+App.init = (function () {
     const $ = document.querySelector.bind(document);
 
     function handleFileSelectEvent(evt) {
@@ -153,7 +155,7 @@ App.init = (function() {
     }
 
     function showMetadata(hash) {
-        App.getMetadata(hash).then( data => {
+        App.getMetadata(hash).then(data => {
             showHash(hash);
             downloadMode(hash, data);
             showFooter();
@@ -166,47 +168,53 @@ App.init = (function() {
         });
     }
 
-    function downloadMode(hash, data){
-      publicData = JSON.parse(data.public)
-      $('#inputAuthor').value = publicData.author
-      $('#inputAuthor').readOnly = true
-      $('#inputVersion').value = publicData.version
-      $('#inputVersion').readOnly = true
-      $('#inputDescription').innerText = publicData.description
-      $('#inputDescription').readOnly = true
+    function downloadMode(hash, data) {
+        publicData = JSON.parse(data.public)
+        $('#inputAuthor').value = publicData.author
+        $('#inputAuthor').readOnly = true
+        $('#inputVersion').value = publicData.version
+        $('#inputVersion').readOnly = true
+        $('#inputDescription').innerText = publicData.description
+        $('#inputDescription').readOnly = true
 
-      $("#uploadFileCheck").closest('.form-group').remove()
-      if (publicData.filename) {
-        document.getElementById("update").innerHTML = "Download";
-        document.getElementById("update").setAttribute('data-url', App.hashBaseUrl+"/"+hash+"/file")
-        document.getElementById("update").removeEventListener('click', update);
+        $("#uploadFileCheck").closest('.form-group').remove()
+        if (publicData.filename) {
+            document.getElementById("update").innerHTML = "Download";
+            document.getElementById("update").setAttribute('data-url', App.hashBaseUrl + "/" + hash + "/file")
+            document.getElementById("update").removeEventListener('click', update);
 
-        document.getElementById("update").addEventListener("click", evt => {
-            evt.preventDefault();
-            App.download();
-        });
-      } else {
-        $("#update").remove()
-      }
+            document.getElementById("update").addEventListener("click", evt => {
+                evt.preventDefault();
+                App.download();
+            });
+        } else {
+            $("#update").remove()
+        }
     }
 
     function updateMode(hash) {
-      $("#update").addEventListener("click", evt => {
-        evt.preventDefault();
-        App.startLoading();
-        App.updateMetadata(hash).then(data => {
-            showMetadata(hash);
+        $("#update").addEventListener("click", evt => {
+            evt.preventDefault();
+            App.startLoading();
+            App.updateMetadata(hash).then(data => {
+                showMetadata(hash);
+            });
         });
-      });
     }
+
     function showHash(hash) {
         $("#file-input-hash").innerText = hash;
+        $("#clipboard-hash").addEventListener("click", evt => {
+            evt.preventDefault();
+            App.copyToClipboard("#file-input-hash");
+        });
         hide($("#drop"));
     }
 
     function hide(elem) {
         elem.classList.add("hidden");
     }
+
     function show(elem) {
         elem.classList.remove("hidden");
     }
@@ -214,3 +222,11 @@ App.init = (function() {
     // input change
     $("input[type=file]").addEventListener("change", handleFileSelectEvent);
 });
+
+App.copyToClipboard = function (element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+}
