@@ -37,9 +37,9 @@ $(document).ready(function () {
 
 });
 
-App.download = function () {
+App.download = function (url) {
     var a = document.createElement("a");
-    a.href = document.getElementById('update').getAttribute('data-url');
+    a.href = url;
     a.setAttribute("download", $('#file-name').innerHTML);
     a.click();
     return false;
@@ -183,14 +183,13 @@ App.init = (function () {
             url = App.hashBaseUrl + "/" + hash + "/file";
         }
 
-        if(url) {
-            document.getElementById("update").innerHTML = "Download";
-            document.getElementById("update").setAttribute('data-url', url);
-            document.getElementById("update").removeEventListener('click', update);
-
-            document.getElementById("update").addEventListener("click", evt => {
+        if (url) {
+            hide(document.getElementById("update"));
+            show(document.getElementById("download"));
+            document.getElementById("download").setAttribute('data-url', url);
+            document.getElementById("download").addEventListener("click", evt => {
                 evt.preventDefault();
-                App.download();
+                App.download(url);
             });
         } else {
             $("#update").remove()
@@ -204,6 +203,14 @@ App.init = (function () {
             App.updateMetadata(hash).then(data => {
                 showMetadata(hash);
             });
+        });
+    }
+
+    function updateMetadataEvt(evt) {
+        evt.preventDefault();
+        App.startLoading();
+        App.updateMetadata(hash).then(data => {
+            showMetadata(hash);
         });
     }
 
