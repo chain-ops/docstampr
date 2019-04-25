@@ -1,5 +1,5 @@
 let App = {};
-App.hashBaseUrl = "http://localhost:8889/hashes";
+App.hashBaseUrl = "http://peer1.pr-bc1.civis-blockchain.org:8889/hashes";
 
 App.sendHash = function (hash) {
     return new Promise((resolve, reject) => {
