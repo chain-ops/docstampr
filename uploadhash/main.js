@@ -178,9 +178,14 @@ App.init = (function () {
         $('#inputDescription').readOnly = true
 
         $("#uploadFileCheck").closest('.form-group').remove()
+        var url = publicData.url;
         if (publicData.filename) {
+            url = App.hashBaseUrl + "/" + hash + "/file";
+        }
+
+        if(url) {
             document.getElementById("update").innerHTML = "Download";
-            document.getElementById("update").setAttribute('data-url', App.hashBaseUrl + "/" + hash + "/file")
+            document.getElementById("update").setAttribute('data-url', url);
             document.getElementById("update").removeEventListener('click', update);
 
             document.getElementById("update").addEventListener("click", evt => {
